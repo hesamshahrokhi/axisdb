@@ -1,0 +1,83 @@
+# Ignore operating system files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE and editor files
+.vscode/
+.idea/
+.eclipse/
+.netbeans/
+
+# Ignore build and compilation files
+build/
+target/
+dist/
+node_modules/
+vendor/
+public/
+
+# Ignore log and temp files
+*.log
+*.tmp
+*.bak
+
+# Ignore package manager files
+package-lock.json
+yarn.lock
+
+# Ignore image and video cache files
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.ico
+*.svg
+*.mp4
+*.mov
+*.avi
+
+# Ignore documentation and example files
+docs/
+examples/
+README.md
+
+# Ignore configuration files
+config.json
+settings.json
+
+# Ignore node.js files
+node_modules/
+npm-debug.log
+
+# Ignore python files
+__pycache__/
+*.pyc
+*.egg-info/
+
+# Ignore java files
+*.class
+*.jar
+
+# Ignore ruby files
+*.rb
+*.gem
+
+# Ignore go files
+*.go
+*.mod
+
+# Ignore swift files
+*.swift
+
+# Ignore miscellaneous files
+*.zip
+*.rar
+*.tar
+*.gz
+*.bz2
+*.7z
+*.exe
+*.msi
+*.apk
+*.ipa
