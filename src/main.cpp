@@ -1,56 +1,54 @@
-#include <H5Cpp.h>
-#include <iostream>
-#include <vector>
-
-using namespace H5;
-using namespace std;
+#include "../include/lib.hpp"
 
 const std::string FILE_NAME = "/home/ubuntu/data/fashion/fashion-mnist-784-euclidean.hdf5";
-const std::string DATASET_NAME = "/train";  // Path to dataset
+const std::string DATASET_NAME = "/train";
 
 int main() {
-    try {
-        // Open the HDF5 file
-        H5File file(FILE_NAME, H5F_ACC_RDONLY);
 
-        // Open the dataset
-        DataSet dataset = file.openDataSet(DATASET_NAME);
+    Timer t;
+    Collection<float> collection ("fashion-mnist-train");
 
-        // Get dataset dimensions
-        DataSpace dataspace = dataset.getSpace();
-        hsize_t dims[2];  // For a 2D array (60000, 784)
-        dataspace.getSimpleExtentDims(dims, NULL);
+    t.reset();
+    read_hdf5_dataset(FILE_NAME.c_str(), DATASET_NAME.c_str(), collection);
+    t.print("reading HDF5 dataset");
 
-        size_t num_vectors = dims[0]; // Number of vectors (60,000)
-        size_t vector_size = dims[1]; // Size of each vector (784)
+    auto num_vectors = collection.size;
+    auto vector_size = collection.vector_size;
 
-        cout << "Dataset size: " << num_vectors << " vectors, each of size " << vector_size << endl;
+    std::cout << "Number of vectors: " << num_vectors << std::endl;
+    std::cout << "Vector size: " << vector_size << std::endl;
 
-        // Prepare memory for reading the first vector
-        std::vector<float> first_vector(vector_size); 
-
-        // Define hyperslab to read only the first row
-        hsize_t offset[2] = {0, 0};   // Start at first vector
-        hsize_t count[2] = {1, vector_size};  // Read 1 vector of size 784
-        dataspace.selectHyperslab(H5S_SELECT_SET, count, offset);
-
-        // Define memory space to match hyperslab
-        DataSpace memspace(2, count);
-
-        // Read data into vector
-        dataset.read(first_vector.data(), PredType::NATIVE_FLOAT, memspace, dataspace);
-
-        // Print first 10 values of the first vector
-        cout << "First 10 values of the first vector:\n";
-        for (size_t i = 0; i < vector_size; i++) {
-            cout << first_vector[i] << " ";
-        }
-        cout << "..." << endl;
-
-    } catch (const Exception &error) {
-        cerr << "HDF5 Error: " << error.getDetailMsg() << endl;
-        return 1;
+    t.reset();
+    float d1 = 0.0f;
+    for (size_t i = 0; i < num_vectors - 1; i++) {
+        float tmp = 0.0f;
+        euclidean_distance(collection.vectors[i], collection.vectors[i+1], tmp);
+        d1 += tmp;
     }
+    t.print("euclidean distance");
+
+    t.reset();
+    float d2 = 0.0f;
+    for (size_t i = 0; i < num_vectors - 1; i++) {
+        float tmp = 0.0f;
+        dot_product(collection.vectors[i], collection.vectors[i+1], tmp);
+        d2 += tmp;
+    }
+    t.print("dot product");
+
+    t.reset();
+    float d3 = 0.0f;
+    for (size_t i = 0; i < num_vectors - 1; i++) {
+        float tmp = 0.0f;
+        cosine_similarity(collection.vectors[i], collection.vectors[i+1], tmp);
+        d3 += tmp;
+    }
+    t.print("cosine similarity");
+
+    std::cout << "Euclidean distance: " << d1 << std::endl;
+    std::cout << "Dot product: " << d2 << std::endl;
+    std::cout << "Cosine similarity: " << d3 << std::endl;
 
     return 0;
+
 }
